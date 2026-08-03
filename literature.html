@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文献库 · 乡研知识库</title>
+<meta name="description" content="乡村发展、乡村旅游与产业发展的必读论文与教材清单。">
+<link rel="stylesheet" href="assets/css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/js/main.js" defer></script>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html"><span class="brand-mark">乡</span>乡研知识库</a>
+    <button class="nav-toggle" data-nav-toggle type="button" aria-label="打开导航" aria-expanded="false">菜单</button>
+    <nav class="site-nav">
+      <a href="index.html">首页</a>
+      <a href="research.html">研究方向</a>
+      <a class="is-active" href="literature.html">文献库</a>
+      <a href="resources.html">数据与工具</a>
+      <a href="cases.html">案例库</a>
+      <a href="journals.html">期刊入口</a>
+      <a href="notes.html">学习笔记</a>
+      <a href="about.html">关于</a>
+    </nav>
+    <div class="site-heat" title="本站累计访客数（由不蒜子统计，网站上线后自动计数）">
+      <span class="heat-dot"></span>
+      <span>访客 <span id="busuanzi_value_site_uv">0</span></span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <section>
+      <p class="kicker">LITERATURE</p>
+      <h1>文献库</h1>
+    </section>
+
+    <div class="add-note-wrap">
+      <button class="btn" id="toggle-add-lit" type="button">＋ 添加文献</button>
+      <form class="add-form" id="add-lit-form" hidden>
+        <div class="field">
+          <label for="lit-title">标题</label>
+          <input id="lit-title" type="text" maxlength="100" required placeholder="论文或教材标题">
+        </div>
+        <div class="field">
+          <label for="lit-direction">研究方向</label>
+          <select id="lit-direction">
+            <option>乡村发展</option>
+            <option>乡村旅游</option>
+            <option>产业发展</option>
+            <option>理论与方法</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="lit-source">出处</label>
+          <input id="lit-source" type="text" maxlength="120" placeholder="作者. 期刊, 年份">
+        </div>
+        <div class="field">
+          <label for="lit-link">原文链接（可选）</label>
+          <input id="lit-link" type="url" placeholder="https://doi.org/...">
+        </div>
+        <div class="field field-full">
+          <label for="lit-summary">一句话点评（可选）</label>
+          <textarea id="lit-summary" rows="2" placeholder="这篇文献值得关注的原因…"></textarea>
+        </div>
+        <div class="field">
+          <button class="btn btn-primary" type="submit">保存文献</button>
+        </div>
+      </form>
+      <p class="muted small" id="add-lit-hint" hidden>已发布到云端，所有访客刷新后即可看到。</p>
+    </div>
+
+    <section>
+      <div class="filter-bar" data-filter-bar data-target="#entry-list">
+        <input type="search" data-search placeholder="搜索标题、作者、关键词…">
+        <button class="filter-btn is-active" data-filter="all" type="button">全部</button>
+        <button class="filter-btn" data-filter="乡村发展" type="button">乡村发展</button>
+        <button class="filter-btn" data-filter="乡村旅游" type="button">乡村旅游</button>
+        <button class="filter-btn" data-filter="产业发展" type="button">产业发展</button>
+        <button class="filter-btn" data-filter="理论与方法" type="button">理论与方法</button>
+      </div>
+
+      <div id="entry-list" class="grid">
+      </div>
+      <p class="muted small" id="entry-list-empty" hidden>文献库还是空的，等待收录第一篇文献。</p>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>乡研知识库 · 乡村发展 / 乡村旅游 / 产业发展研究资料站</p>
+    <p class="muted small"><button class="admin-link" id="admin-entry" type="button">管理</button></p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数据与工具 · 乡研知识库</title>
+<meta name="description" content="乡村研究常用数据资源与分析工具清单。">
+<link rel="stylesheet" href="assets/css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/js/main.js" defer></script>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html"><span class="brand-mark">乡</span>乡研知识库</a>
+    <button class="nav-toggle" data-nav-toggle type="button" aria-label="打开导航" aria-expanded="false">菜单</button>
+    <nav class="site-nav">
+      <a href="index.html">首页</a>
+      <a href="research.html">研究方向</a>
+      <a href="literature.html">文献库</a>
+      <a class="is-active" href="resources.html">数据与工具</a>
+      <a href="cases.html">案例库</a>
+      <a href="journals.html">期刊入口</a>
+      <a href="notes.html">学习笔记</a>
+      <a href="about.html">关于</a>
+    </nav>
+    <div class="site-heat" title="本站累计访客数（由不蒜子统计，网站上线后自动计数）">
+      <span class="heat-dot"></span>
+      <span>访客 <span id="busuanzi_value_site_uv">0</span></span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <section>
+      <p class="kicker">DATA &amp; TOOLS</p>
+      <h1>数据与工具</h1>
+    </section>
+
+    <div class="add-note-wrap">
+      <button class="btn" id="toggle-add-res" type="button">＋ 添加资源</button>
+      <form class="add-form" id="add-res-form" hidden>
+        <div class="field">
+          <label for="res-name">名称</label>
+          <input id="res-name" type="text" maxlength="60" required placeholder="如：中国农村统计年鉴">
+        </div>
+        <div class="field">
+          <label for="res-category">分类</label>
+          <select id="res-category">
+            <option>数据</option>
+            <option>工具</option>
+          </select>
+        </div>
+        <div class="field field-full">
+          <label for="res-desc">说明</label>
+          <textarea id="res-desc" rows="3" required placeholder="用途、获取方式等…"></textarea>
+        </div>
+        <div class="field field-full">
+          <label for="res-link">链接（可选）</label>
+          <input id="res-link" type="url" placeholder="https://...">
+        </div>
+        <div class="field">
+          <button class="btn btn-primary" type="submit">保存资源</button>
+        </div>
+      </form>
+      <p class="muted small" id="add-res-hint" hidden>已发布到云端，所有访客刷新后即可看到。</p>
+    </div>
+
+    <section>
+      <div class="filter-bar" data-filter-bar data-target="#resource-list">
+        <input type="search" data-search placeholder="搜索名称、用途…">
+        <button class="filter-btn is-active" data-filter="all" type="button">全部</button>
+        <button class="filter-btn" data-filter="数据" type="button">数据资源</button>
+        <button class="filter-btn" data-filter="工具" type="button">分析工具</button>
+      </div>
+
+      <div id="resource-list" class="grid grid-2">
+      </div>
+      <p class="muted small" id="resource-list-empty" hidden>资源清单还是空的，等待添加第一项数据或工具。</p>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>乡研知识库 · 乡村发展 / 乡村旅游 / 产业发展研究资料站</p>
+    <p class="muted small"><button class="admin-link" id="admin-entry" type="button">管理</button></p>
+  </div>
+</footer>
+
+</body>
+</html>

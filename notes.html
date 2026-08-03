@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学习笔记 · 乡研知识库</title>
+<meta name="description" content="乡村研究的学习笔记：文献阅读、方法学习与踩坑记录。">
+<link rel="stylesheet" href="assets/css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/js/main.js" defer></script>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html"><span class="brand-mark">乡</span>乡研知识库</a>
+    <button class="nav-toggle" data-nav-toggle type="button" aria-label="打开导航" aria-expanded="false">菜单</button>
+    <nav class="site-nav">
+      <a href="index.html">首页</a>
+      <a href="research.html">研究方向</a>
+      <a href="literature.html">文献库</a>
+      <a href="resources.html">数据与工具</a>
+      <a href="cases.html">案例库</a>
+      <a href="journals.html">期刊入口</a>
+      <a class="is-active" href="notes.html">学习笔记</a>
+      <a href="about.html">关于</a>
+    </nav>
+    <div class="site-heat" title="本站累计访客数（由不蒜子统计，网站上线后自动计数）">
+      <span class="heat-dot"></span>
+      <span>访客 <span id="busuanzi_value_site_uv">0</span></span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <section>
+      <p class="kicker">NOTES</p>
+      <h1>学习笔记</h1>
+    </section>
+
+    <div class="add-note-wrap">
+      <button class="btn" id="toggle-add-note" type="button">＋ 添加笔记</button>
+      <form class="add-form" id="add-note-form" hidden>
+        <div class="field">
+          <label for="note-title">标题</label>
+          <input id="note-title" type="text" maxlength="60" required placeholder="笔记标题">
+        </div>
+        <div class="field">
+          <label for="note-status">状态</label>
+          <select id="note-status">
+            <option>待写</option>
+            <option selected>草稿</option>
+            <option>已发布</option>
+          </select>
+        </div>
+        <div class="field field-full">
+          <label for="note-detail">内容</label>
+          <textarea id="note-detail" rows="4" required placeholder="写点什么…"></textarea>
+        </div>
+        <div class="field">
+          <button class="btn btn-primary" type="submit">保存笔记</button>
+        </div>
+      </form>
+      <p class="muted small" id="add-note-hint" hidden>已发布到云端，所有访客刷新后即可看到。</p>
+    </div>
+
+    <section>
+      <div class="filter-bar" data-filter-bar data-target="#note-list">
+        <button class="filter-btn is-active" data-filter="all" type="button">全部</button>
+        <button class="filter-btn" data-filter="待写" type="button">待写</button>
+        <button class="filter-btn" data-filter="草稿" type="button">草稿</button>
+        <button class="filter-btn" data-filter="已发布" type="button">已发布</button>
+      </div>
+
+      <div id="note-list" class="grid grid-2">
+      </div>
+      <p class="muted small" id="note-list-empty" hidden>笔记还是空的。</p>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>乡研知识库 · 乡村发展 / 乡村旅游 / 产业发展研究资料站</p>
+    <p class="muted small"><button class="admin-link" id="admin-entry" type="button">管理</button></p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>案例库 · 乡研知识库</title>
+<meta name="description" content="乡村发展、乡村旅游与产业发展典型案例库。">
+<link rel="stylesheet" href="assets/css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/js/main.js" defer></script>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html"><span class="brand-mark">乡</span>乡研知识库</a>
+    <button class="nav-toggle" data-nav-toggle type="button" aria-label="打开导航" aria-expanded="false">菜单</button>
+    <nav class="site-nav">
+      <a href="index.html">首页</a>
+      <a href="research.html">研究方向</a>
+      <a href="literature.html">文献库</a>
+      <a href="resources.html">数据与工具</a>
+      <a class="is-active" href="cases.html">案例库</a>
+      <a href="journals.html">期刊入口</a>
+      <a href="notes.html">学习笔记</a>
+      <a href="about.html">关于</a>
+    </nav>
+    <div class="site-heat" title="本站累计访客数（由不蒜子统计，网站上线后自动计数）">
+      <span class="heat-dot"></span>
+      <span>访客 <span id="busuanzi_value_site_uv">0</span></span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <section>
+      <p class="kicker">CASES</p>
+      <h1>案例库</h1>
+    </section>
+
+    <div class="add-note-wrap">
+      <button class="btn" id="toggle-add-case" type="button">＋ 添加案例</button>
+      <form class="add-form" id="add-case-form" hidden>
+        <div class="field">
+          <label for="case-name">案例名称</label>
+          <input id="case-name" type="text" maxlength="60" required placeholder="如：浙江安吉余村">
+        </div>
+        <div class="field">
+          <label for="case-type">案例类型</label>
+          <select id="case-type">
+            <option>乡村旅游</option>
+            <option>乡村发展</option>
+            <option>产业发展</option>
+            <option>综合</option>
+            <option value="__custom">自定义类型…</option>
+          </select>
+        </div>
+        <div class="field" id="case-type-custom-wrap" hidden>
+          <label for="case-type-custom">自定义案例类型</label>
+          <input id="case-type-custom" type="text" maxlength="30" placeholder="输入案例类型，如：农文旅融合">
+        </div>
+        <div class="field field-full">
+          <label for="case-research">已有研究（可选）</label>
+          <textarea id="case-research" rows="3" placeholder="该案例已有的相关研究、文献或成果…"></textarea>
+        </div>
+        <div class="field field-full">
+          <label for="case-desc">案例介绍</label>
+          <textarea id="case-desc" rows="5" required placeholder="案例基本情况、发展做法、成效与可借鉴之处…"></textarea>
+        </div>
+        <div class="field field-full">
+          <label for="case-photo">照片（可选，建议 2MB 以内）</label>
+          <input id="case-photo" type="file" accept="image/*">
+        </div>
+        <div class="field">
+          <button class="btn btn-primary" type="submit">保存案例</button>
+        </div>
+      </form>
+      <p class="muted small" id="add-case-hint" hidden>已发布到云端，所有访客刷新后即可看到。</p>
+    </div>
+
+    <section>
+      <div class="filter-bar" data-filter-bar data-target="#case-list">
+        <button class="filter-btn is-active" data-filter="all" type="button">全部</button>
+        <button class="filter-btn" data-filter="乡村旅游" type="button">乡村旅游</button>
+        <button class="filter-btn" data-filter="乡村发展" type="button">乡村发展</button>
+        <button class="filter-btn" data-filter="产业发展" type="button">产业发展</button>
+        <button class="filter-btn" data-filter="综合" type="button">综合</button>
+      </div>
+      <div id="case-list" class="grid grid-2"></div>
+      <p class="muted small" id="case-list-empty" hidden>案例库还是空的。</p>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>乡研知识库 · 乡村发展 / 乡村旅游 / 产业发展研究资料站</p>
+    <p class="muted small"><button class="admin-link" id="admin-entry" type="button">管理</button></p>
+  </div>
+</footer>
+
+</body>
+</html>

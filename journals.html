@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>期刊入口 · 乡研知识库</title>
+<meta name="description" content="乡村发展、乡村旅游与产业发展相关期刊与学术数据库入口。">
+<link rel="stylesheet" href="assets/css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/js/main.js" defer></script>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html"><span class="brand-mark">乡</span>乡研知识库</a>
+    <button class="nav-toggle" data-nav-toggle type="button" aria-label="打开导航" aria-expanded="false">菜单</button>
+    <nav class="site-nav">
+      <a href="index.html">首页</a>
+      <a href="research.html">研究方向</a>
+      <a href="literature.html">文献库</a>
+      <a href="resources.html">数据与工具</a>
+      <a href="cases.html">案例库</a>
+      <a class="is-active" href="journals.html">期刊入口</a>
+      <a href="notes.html">学习笔记</a>
+      <a href="about.html">关于</a>
+    </nav>
+    <div class="site-heat" title="本站累计访客数（由不蒜子统计，网站上线后自动计数）">
+      <span class="heat-dot"></span>
+      <span>访客 <span id="busuanzi_value_site_uv">0</span></span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <section>
+      <p class="kicker">JOURNALS</p>
+      <h1>期刊入口</h1>
+    </section>
+
+    <div class="add-note-wrap">
+      <button class="btn" id="toggle-add-jnl" type="button">＋ 添加期刊</button>
+      <form class="add-form" id="add-jnl-form" hidden>
+        <div class="field">
+          <label for="jnl-name">名称</label>
+          <input id="jnl-name" type="text" maxlength="80" required placeholder="期刊或平台名称">
+        </div>
+        <div class="field">
+          <label for="jnl-category">类别</label>
+          <select id="jnl-category">
+            <option>中文期刊</option>
+            <option>英文期刊</option>
+            <option>数据库平台</option>
+          </select>
+        </div>
+        <div class="field field-full">
+          <label for="jnl-tags">标签（可选，用空格分隔）</label>
+          <input id="jnl-tags" type="text" maxlength="60" placeholder="如：乡村发展 区域研究">
+        </div>
+        <div class="field field-full">
+          <label for="jnl-desc">说明</label>
+          <textarea id="jnl-desc" rows="3" required placeholder="期刊或平台的简介…"></textarea>
+        </div>
+        <div class="field field-full">
+          <label for="jnl-link">链接</label>
+          <input id="jnl-link" type="url" required placeholder="https://...">
+        </div>
+        <div class="field">
+          <button class="btn btn-primary" type="submit">保存期刊</button>
+        </div>
+      </form>
+      <p class="muted small" id="add-jnl-hint" hidden>已发布到云端，所有访客刷新后即可看到。</p>
+    </div>
+
+    <section>
+      <div class="filter-bar" data-filter-bar data-target="#journal-list">
+        <input type="search" data-search placeholder="搜索期刊、数据库名称或方向…">
+        <button class="filter-btn is-active" data-filter="all" type="button">全部</button>
+        <button class="filter-btn" data-filter="中文期刊" type="button">中文期刊</button>
+        <button class="filter-btn" data-filter="英文期刊" type="button">英文期刊</button>
+        <button class="filter-btn" data-filter="数据库平台" type="button">数据库平台</button>
+      </div>
+      <div id="journal-list" class="grid grid-2"></div>
+      <p class="muted small" id="journal-list-empty" hidden>期刊入口还是空的。</p>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>乡研知识库 · 乡村发展 / 乡村旅游 / 产业发展研究资料站</p>
+    <p class="muted small"><button class="admin-link" id="admin-entry" type="button">管理</button></p>
+  </div>
+</footer>
+
+</body>
+</html>
