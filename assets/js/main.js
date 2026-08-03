@@ -7,6 +7,40 @@
     ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
     : null;
 
+  var VIEW_WINDOW_MS = 10 * 60 * 1000;
+  var VIEW_KEY = "xiangyan_site_view_ts";
+
+  function setViewNumber(n) {
+    var el = document.getElementById("site-view-count");
+    if (el) el.textContent = String(n);
+  }
+
+  function maybeCountView() {
+    if (!sb) return;
+    var last = parseInt(localStorage.getItem(VIEW_KEY) || "0", 10) || 0;
+    var now = Date.now();
+    if (now - last < VIEW_WINDOW_MS) {
+      sb.from("site_stats").select("views").eq("id", 1).maybeSingle().then(function (res) {
+        if (!res.error && res.data) setViewNumber(res.data.views);
+      });
+      return;
+    }
+    sb.rpc("increment_site_views").then(function (res) {
+      if (res.error) {
+        sb.from("site_stats").select("views").eq("id", 1).maybeSingle().then(function (r2) {
+          if (!r2.error && r2.data) setViewNumber(r2.data.views);
+        });
+        return;
+      }
+      if (typeof res.data === "number" || typeof res.data === "string") {
+        localStorage.setItem(VIEW_KEY, String(now));
+        setViewNumber(res.data);
+      }
+    });
+  }
+
+  maybeCountView();
+
   var toggle = document.querySelector("[data-nav-toggle]");
   var nav = document.querySelector(".site-nav");
   if (toggle && nav) {
