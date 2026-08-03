@@ -288,8 +288,23 @@ section { margin-bottom: 48px; }
   padding: 10px 12px;
   background: var(--green-soft);
   border-left: 3px solid var(--green);
-  font-size: 14px;
+  font-size: 15px;
   color: var(--ink-soft);
+}
+
+.case-summary { margin-top: 12px; }
+
+.case-summary .entry-summary {
+  margin-bottom: 0;
+  font-size: 15px;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.case-summary.is-open .entry-summary {
+  -webkit-line-clamp: unset;
 }
 
 .field-label {

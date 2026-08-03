@@ -284,13 +284,16 @@
         researchEl.appendChild(document.createTextNode(item.research));
       }
 
-      var summary = document.createElement("p");
-      summary.className = "entry-summary";
+      var summaryWrap = document.createElement("div");
+      summaryWrap.className = "case-summary";
       var sLabel = document.createElement("span");
       sLabel.className = "field-label";
       sLabel.textContent = "案例介绍";
-      summary.appendChild(sLabel);
-      summary.appendChild(document.createTextNode(item.description || item.desc || ""));
+      var summary = document.createElement("p");
+      summary.className = "entry-summary";
+      summary.textContent = item.description || item.desc || "";
+      summaryWrap.appendChild(sLabel);
+      summaryWrap.appendChild(summary);
 
       var links = document.createElement("p");
       links.className = "entry-links";
@@ -306,9 +309,18 @@
       article.appendChild(head);
       if (photoWrap) article.appendChild(photoWrap);
       if (researchEl) article.appendChild(researchEl);
-      article.appendChild(summary);
+      article.appendChild(summaryWrap);
       article.appendChild(links);
       caseList.appendChild(article);
+
+      if (summary.scrollHeight > summary.clientHeight + 8) {
+        var expandBtn = document.createElement("button");
+        expandBtn.className = "note-toggle";
+        expandBtn.setAttribute("data-expand", "1");
+        expandBtn.type = "button";
+        expandBtn.textContent = "展开全文";
+        links.insertBefore(expandBtn, links.firstChild);
+      }
     }
 
     function loadCases() {
@@ -327,6 +339,14 @@
     caseList.addEventListener("click", function (e) {
       var card = e.target.closest(".entry");
       if (!card) return;
+      if (e.target.closest("[data-expand]")) {
+        var wrap = card.querySelector(".case-summary");
+        if (wrap) {
+          var open = wrap.classList.toggle("is-open");
+          var btn = card.querySelector("[data-expand]");
+          if (btn) btn.textContent = open ? "收起" : "展开全文";
+        }
+      }
       if (e.target.closest("[data-remove]")) {
         if (!window.confirm("确定删除这个案例吗？")) return;
         var id = card.getAttribute("data-id");
