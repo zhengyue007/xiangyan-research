@@ -399,7 +399,9 @@
           if (file.size > 2 * 1024 * 1024) {
             window.alert("照片较大，建议选择 2MB 以内的图片。");
           }
-          var path = "case-" + Date.now() + "-" + (file.name || "photo");
+          var ext = (file.name || "").split(".").pop() || "jpg";
+          ext = ext.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+          var path = "case-" + Date.now() + "." + ext;
           sb.storage.from("case-photos").upload(path, file).then(function (up) {
             if (up.error) {
               window.alert("照片上传失败：" + up.error.message);
