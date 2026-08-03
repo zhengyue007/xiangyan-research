@@ -45,7 +45,7 @@
 
 内容写入 Supabase 云数据库，所有访客共享同一份数据。笔记、案例、文献库、数据与工具、期刊入口五个板块均支持管理员在线添加，添加的内容刷新后所有人即可看到；删除操作仅管理员登录后可见，访客只能浏览。
 
-连接配置：Supabase 项目地址与公开钥匙在 `assets/js/main.js` 顶部（SUPABASE_URL、SUPABASE_KEY）。数据库表 notes、cases、literature、resources、journals 和存储桶 case-photos 需按接入说明创建。
+连接配置：Supabase 项目地址与公开钥匙在 `assets/js/main.js` 顶部（SUPABASE_URL、SUPABASE_KEY）。Supabase 前端库已本地化在 `assets/js/vendor/supabase.min.js`，不依赖外部 CDN。数据库表 notes、cases、literature、resources、journals、site_stats 和存储桶 case-photos 需按接入说明创建。
 
 默认密码：`260803`，可在 `assets/js/main.js` 中修改。
 
