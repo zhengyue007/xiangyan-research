@@ -336,16 +336,60 @@
         });
     }
 
+    var modal = null;
+
+    function buildModal() {
+      var overlay = document.createElement("div");
+      overlay.className = "case-modal-overlay";
+      var panel = document.createElement("div");
+      panel.className = "case-modal";
+      var head = document.createElement("div");
+      head.className = "case-modal-head";
+      var title = document.createElement("h3");
+      title.textContent = "案例介绍";
+      var closeBtn = document.createElement("button");
+      closeBtn.className = "modal-close";
+      closeBtn.type = "button";
+      closeBtn.textContent = "关闭";
+      head.appendChild(title);
+      head.appendChild(closeBtn);
+      var body = document.createElement("div");
+      body.className = "case-modal-body";
+      panel.appendChild(head);
+      panel.appendChild(body);
+      overlay.appendChild(panel);
+      document.body.appendChild(overlay);
+
+      function close() {
+        overlay.classList.remove("is-open");
+        document.body.classList.remove("modal-open");
+      }
+      closeBtn.addEventListener("click", close);
+      overlay.addEventListener("click", function (e) {
+        if (e.target === overlay) close();
+      });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && overlay.classList.contains("is-open")) close();
+      });
+      return { overlay: overlay, body: body };
+    }
+
+    function openCaseModal(titleText, bodyText) {
+      if (!modal) modal = buildModal();
+      var h = modal.overlay.querySelector(".case-modal-head h3");
+      if (h) h.textContent = titleText;
+      modal.body.textContent = bodyText || "";
+      modal.overlay.classList.add("is-open");
+      document.body.classList.add("modal-open");
+    }
+
     caseList.addEventListener("click", function (e) {
       var card = e.target.closest(".entry");
       if (!card) return;
       if (e.target.closest("[data-expand]")) {
-        var wrap = card.querySelector(".case-summary");
-        if (wrap) {
-          var open = wrap.classList.toggle("is-open");
-          var btn = card.querySelector("[data-expand]");
-          if (btn) btn.textContent = open ? "收起" : "展开全文";
-        }
+        var titleEl = card.querySelector(".entry-title");
+        var summaryEl = card.querySelector(".entry-summary");
+        openCaseModal(titleEl ? titleEl.textContent : "案例介绍", summaryEl ? summaryEl.textContent : "");
       }
       if (e.target.closest("[data-remove]")) {
         if (!window.confirm("确定删除这个案例吗？")) return;
