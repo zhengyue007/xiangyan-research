@@ -574,6 +574,17 @@
       var painterStyles = null;
       var painterBtn = toolbar.querySelector('[data-cmd="formatPainter"]');
 
+      if (painterBtn) {
+        painterBtn.addEventListener("mousedown", function (e) {
+          e.preventDefault();
+          if (painterStyles) {
+            applyPainter();
+          } else {
+            capturePainter();
+          }
+        });
+      }
+
       function capturePainter() {
         var sel = window.getSelection();
         if (!sel || !sel.rangeCount) return;
@@ -585,9 +596,9 @@
           backgroundColor: cs.backgroundColor && cs.backgroundColor !== "rgba(0, 0, 0, 0)" ? cs.backgroundColor : "",
           fontSize: cs.fontSize,
           fontFamily: cs.fontFamily,
-          bold: document.queryCommandState("bold"),
-          italic: document.queryCommandState("italic"),
-          underline: document.queryCommandState("underline"),
+          bold: cs.fontWeight === "bold" || parseInt(cs.fontWeight, 10) >= 600,
+          italic: cs.fontStyle === "italic",
+          underline: (cs.textDecorationLine || "").indexOf("underline") !== -1,
           textAlign: cs.textAlign,
           textIndent: cs.textIndent,
           lineHeight: cs.lineHeight
@@ -652,11 +663,6 @@
           editor.focus();
           var cmd = ctl.getAttribute("data-cmd");
           if (cmd === "formatPainter") {
-            if (painterStyles) {
-              applyPainter();
-            } else {
-              capturePainter();
-            }
             return;
           }
           if (cmd === "firstLine") {
