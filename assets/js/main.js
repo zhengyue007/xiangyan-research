@@ -322,19 +322,23 @@
         photoWrap.appendChild(img);
       }
 
-      var researchEl = null;
+      var researchWrap = null;
+      var researchText = null;
       if (item.research) {
-        researchEl = document.createElement("p");
-        researchEl.className = "case-research";
+        researchWrap = document.createElement("div");
+        researchWrap.className = "case-research";
         var rLabel = document.createElement("span");
         rLabel.className = "field-label";
         rLabel.textContent = "已有研究";
-        researchEl.appendChild(rLabel);
+        researchWrap.appendChild(rLabel);
+        researchText = document.createElement("p");
+        researchText.className = "research-text";
         if (item.research_html) {
-          researchEl.insertAdjacentHTML("beforeend", sanitizeHtml(item.research_html));
+          researchText.innerHTML = sanitizeHtml(item.research_html);
         } else {
-          researchEl.appendChild(document.createTextNode(item.research));
+          researchText.textContent = item.research;
         }
+        researchWrap.appendChild(researchText);
       }
 
       var summaryWrap = document.createElement("div");
@@ -369,12 +373,14 @@
 
       article.appendChild(head);
       if (photoWrap) article.appendChild(photoWrap);
-      if (researchEl) article.appendChild(researchEl);
+      if (researchWrap) article.appendChild(researchWrap);
       article.appendChild(summaryWrap);
       article.appendChild(links);
       caseList.appendChild(article);
 
-      if (summary.scrollHeight > summary.clientHeight + 8) {
+      var researchLong = researchText && researchText.scrollHeight > researchText.clientHeight + 8;
+      var summaryLong = summary.scrollHeight > summary.clientHeight + 8;
+      if (researchLong || summaryLong) {
         var expandBtn = document.createElement("button");
         expandBtn.className = "note-toggle";
         expandBtn.setAttribute("data-expand", "1");
@@ -435,11 +441,30 @@
       return { overlay: overlay, body: body };
     }
 
-    function openCaseModal(titleText, bodyHtml) {
+    function openCaseModal(titleText, researchHtml, descHtml) {
       if (!modal) modal = buildModal();
       var h = modal.overlay.querySelector(".case-modal-head h3");
       if (h) h.textContent = titleText;
-      modal.body.innerHTML = sanitizeHtml(bodyHtml || "");
+      var body = modal.body;
+      body.innerHTML = "";
+      if (researchHtml) {
+        var rBlock = document.createElement("div");
+        var rLabel = document.createElement("span");
+        rLabel.className = "field-label";
+        rLabel.textContent = "已有研究";
+        rBlock.appendChild(rLabel);
+        rBlock.insertAdjacentHTML("beforeend", sanitizeHtml(researchHtml));
+        body.appendChild(rBlock);
+      }
+      if (descHtml) {
+        var dBlock = document.createElement("div");
+        var dLabel = document.createElement("span");
+        dLabel.className = "field-label";
+        dLabel.textContent = "案例介绍";
+        dBlock.appendChild(dLabel);
+        dBlock.insertAdjacentHTML("beforeend", sanitizeHtml(descHtml));
+        body.appendChild(dBlock);
+      }
       modal.overlay.classList.add("is-open");
       document.body.classList.add("modal-open");
     }
@@ -501,7 +526,8 @@
       }
       if (e.target.closest("[data-expand]")) {
         var titleEl = card.querySelector(".entry-title");
-        openCaseModal(titleEl ? titleEl.textContent : "案例介绍", card.getAttribute("data-full-html") || "");
+        var researchHtml = card.getAttribute("data-research-html") || escapeHtml(card.getAttribute("data-research") || "");
+        openCaseModal(titleEl ? titleEl.textContent : "案例", researchHtml, card.getAttribute("data-full-html") || "");
       }
       if (e.target.closest("[data-remove]")) {
         if (!window.confirm("确定删除这个案例吗？")) return;

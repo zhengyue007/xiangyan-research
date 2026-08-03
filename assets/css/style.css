@@ -292,6 +292,15 @@ section { margin-bottom: 48px; }
   color: var(--ink-soft);
 }
 
+.research-text {
+  margin: 0;
+  font-size: 16px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .case-summary { margin-top: 12px; }
 
 .case-summary .entry-summary {
@@ -373,6 +382,12 @@ section { margin-bottom: 48px; }
   line-height: 1.9;
   color: var(--ink);
   white-space: pre-wrap;
+}
+
+.case-modal-body > div + div {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--line);
 }
 
 body.modal-open { overflow: hidden; }
