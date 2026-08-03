@@ -570,6 +570,69 @@
       var targetId = toolbar.getAttribute("data-rich-toolbar");
       var editor = document.querySelector('[data-rich="' + targetId + '"]');
       if (!editor) return;
+
+      var painterStyles = null;
+      var painterBtn = toolbar.querySelector('[data-cmd="formatPainter"]');
+
+      function capturePainter() {
+        var sel = window.getSelection();
+        if (!sel || !sel.rangeCount) return;
+        var node = sel.getRangeAt(0).startContainer;
+        var el = node.nodeType === 1 ? node : node.parentElement;
+        var cs = window.getComputedStyle(el);
+        painterStyles = {
+          color: cs.color,
+          backgroundColor: cs.backgroundColor && cs.backgroundColor !== "rgba(0, 0, 0, 0)" ? cs.backgroundColor : "",
+          fontSize: cs.fontSize,
+          fontFamily: cs.fontFamily,
+          bold: document.queryCommandState("bold"),
+          italic: document.queryCommandState("italic"),
+          underline: document.queryCommandState("underline"),
+          textAlign: cs.textAlign,
+          textIndent: cs.textIndent,
+          lineHeight: cs.lineHeight
+        };
+        if (painterBtn) painterBtn.classList.add("is-active");
+      }
+
+      function applyPainter() {
+        if (!painterStyles) return;
+        var sel = window.getSelection();
+        if (!sel || !sel.rangeCount || sel.isCollapsed) return;
+
+        var range = sel.getRangeAt(0);
+        var span = document.createElement("span");
+        if (painterStyles.color) span.style.color = painterStyles.color;
+        if (painterStyles.backgroundColor) span.style.backgroundColor = painterStyles.backgroundColor;
+        if (painterStyles.fontSize) span.style.fontSize = painterStyles.fontSize;
+        if (painterStyles.fontFamily) span.style.fontFamily = painterStyles.fontFamily;
+        if (painterStyles.bold) span.style.fontWeight = "bold";
+        if (painterStyles.italic) span.style.fontStyle = "italic";
+        if (painterStyles.underline) span.style.textDecoration = "underline";
+        var frag = range.extractContents();
+        span.appendChild(frag);
+        range.insertNode(span);
+
+        var block = span.parentElement || span;
+        while (block && block !== editor && !/^(P|DIV|LI|H[1-6])$/.test(block.tagName)) {
+          block = block.parentElement;
+        }
+        if (block && block !== editor) {
+          if (painterStyles.textAlign) block.style.textAlign = painterStyles.textAlign;
+          if (painterStyles.textIndent) block.style.textIndent = painterStyles.textIndent;
+          if (painterStyles.lineHeight) block.style.lineHeight = painterStyles.lineHeight;
+        }
+
+        painterStyles = null;
+        if (painterBtn) painterBtn.classList.remove("is-active");
+      }
+
+      editor.addEventListener("mouseup", function () {
+        if (!painterStyles) return;
+        var s = window.getSelection();
+        if (s && s.rangeCount && !s.isCollapsed) applyPainter();
+      });
+
       toolbar.querySelectorAll("[data-cmd]").forEach(function (ctl) {
         if (ctl.tagName === "SELECT") {
           ctl.addEventListener("change", function () {
@@ -588,6 +651,14 @@
         ctl.addEventListener("click", function () {
           editor.focus();
           var cmd = ctl.getAttribute("data-cmd");
+          if (cmd === "formatPainter") {
+            if (painterStyles) {
+              applyPainter();
+            } else {
+              capturePainter();
+            }
+            return;
+          }
           if (cmd === "firstLine") {
             document.execCommand("styleWithCSS", false, true);
             var sel = window.getSelection();

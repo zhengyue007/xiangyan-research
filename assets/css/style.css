@@ -416,6 +416,7 @@ body.modal-open { overflow: hidden; }
 }
 
 .rich-toolbar button:hover { border-color: var(--green); color: var(--green-deep); }
+.rich-toolbar button.is-active { background: var(--green-deep); border-color: var(--green-deep); color: #fff; }
 
 .rich-sep {
   width: 1px;
