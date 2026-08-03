@@ -41,6 +41,45 @@
 
   maybeCountView();
 
+  function escapeHtml(s) {
+    var d = document.createElement("div");
+    d.textContent = s == null ? "" : String(s);
+    return d.innerHTML;
+  }
+
+  function htmlToText(html) {
+    var d = document.createElement("div");
+    d.innerHTML = sanitizeHtml(html || "");
+    return d.textContent;
+  }
+
+  function sanitizeHtml(html) {
+    var allowed = { FONT: 1, SPAN: 1, B: 1, STRONG: 1, I: 1, EM: 1, U: 1, S: 1, P: 1, DIV: 1, BR: 1, UL: 1, OL: 1, LI: 1 };
+    var doc = new DOMParser().parseFromString(html || "", "text/html");
+
+    function clean(node) {
+      Array.prototype.slice.call(node.children).forEach(function (child) {
+        var tag = child.tagName ? child.tagName.toUpperCase() : "";
+        if (!allowed[tag]) {
+          while (child.firstChild) node.insertBefore(child.firstChild, child);
+          node.removeChild(child);
+          clean(node);
+          return;
+        }
+        Array.prototype.slice.call(child.attributes).forEach(function (attr) {
+          var name = attr.name.toLowerCase();
+          var value = attr.value.toLowerCase();
+          if (name.indexOf("on") === 0 || value.indexOf("javascript:") === 0) {
+            child.removeAttribute(attr.name);
+          }
+        });
+        clean(child);
+      });
+    }
+    clean(doc.body);
+    return doc.body.innerHTML;
+  }
+
   var toggle = document.querySelector("[data-nav-toggle]");
   var nav = document.querySelector(".site-nav");
   if (toggle && nav) {
@@ -242,8 +281,6 @@
     var hint = document.getElementById("add-case-hint");
     var customWrap = document.getElementById("case-type-custom-wrap");
     var customInput = document.getElementById("case-type-custom");
-    var researchInput = document.getElementById("case-research");
-
     function addCard(item) {
       var article = document.createElement("article");
       article.className = "card entry";
@@ -281,7 +318,11 @@
         rLabel.className = "field-label";
         rLabel.textContent = "已有研究";
         researchEl.appendChild(rLabel);
-        researchEl.appendChild(document.createTextNode(item.research));
+        if (item.research_html) {
+          researchEl.insertAdjacentHTML("beforeend", sanitizeHtml(item.research_html));
+        } else {
+          researchEl.appendChild(document.createTextNode(item.research));
+        }
       }
 
       var summaryWrap = document.createElement("div");
@@ -291,9 +332,10 @@
       sLabel.textContent = "案例介绍";
       var summary = document.createElement("p");
       summary.className = "entry-summary";
-      summary.textContent = item.description || item.desc || "";
+      summary.textContent = item.description || htmlToText(item.description_html) || item.desc || "";
       summaryWrap.appendChild(sLabel);
       summaryWrap.appendChild(summary);
+      article.setAttribute("data-full-html", item.description_html || escapeHtml(item.description || item.desc || ""));
 
       var links = document.createElement("p");
       links.className = "entry-links";
@@ -374,11 +416,11 @@
       return { overlay: overlay, body: body };
     }
 
-    function openCaseModal(titleText, bodyText) {
+    function openCaseModal(titleText, bodyHtml) {
       if (!modal) modal = buildModal();
       var h = modal.overlay.querySelector(".case-modal-head h3");
       if (h) h.textContent = titleText;
-      modal.body.textContent = bodyText || "";
+      modal.body.innerHTML = sanitizeHtml(bodyHtml || "");
       modal.overlay.classList.add("is-open");
       document.body.classList.add("modal-open");
     }
@@ -388,8 +430,7 @@
       if (!card) return;
       if (e.target.closest("[data-expand]")) {
         var titleEl = card.querySelector(".entry-title");
-        var summaryEl = card.querySelector(".entry-summary");
-        openCaseModal(titleEl ? titleEl.textContent : "案例介绍", summaryEl ? summaryEl.textContent : "");
+        openCaseModal(titleEl ? titleEl.textContent : "案例介绍", card.getAttribute("data-full-html") || "");
       }
       if (e.target.closest("[data-remove]")) {
         if (!window.confirm("确定删除这个案例吗？")) return;
@@ -425,15 +466,43 @@
       });
     }
 
+    document.querySelectorAll("[data-rich-toolbar]").forEach(function (toolbar) {
+      var targetId = toolbar.getAttribute("data-rich-toolbar");
+      var editor = document.querySelector('[data-rich="' + targetId + '"]');
+      if (!editor) return;
+      toolbar.querySelectorAll("[data-cmd]").forEach(function (ctl) {
+        if (ctl.tagName === "SELECT") {
+          ctl.addEventListener("change", function () {
+            editor.focus();
+            document.execCommand("fontSize", false, ctl.value);
+          });
+          return;
+        }
+        if (ctl.type === "color") {
+          ctl.addEventListener("input", function () {
+            editor.focus();
+            document.execCommand(ctl.getAttribute("data-cmd"), false, ctl.value);
+          });
+          return;
+        }
+        ctl.addEventListener("click", function () {
+          editor.focus();
+          document.execCommand(ctl.getAttribute("data-cmd"), false, null);
+        });
+      });
+    });
+
     if (formWrap) {
       formWrap.addEventListener("submit", function (e) {
         e.preventDefault();
         var nameInput = document.getElementById("case-name");
-        var descInput = document.getElementById("case-desc");
+        var descEditor = document.querySelector('[data-rich="case-desc"]');
+        var researchEditor = document.querySelector('[data-rich="case-research"]');
         var photoInput = document.getElementById("case-photo");
-        if (!nameInput || !descInput) return;
+        if (!nameInput || !descEditor) return;
         var name = nameInput.value.trim();
-        var desc = descInput.value.trim();
+        var desc = descEditor.innerText.trim();
+        var descHtml = sanitizeHtml(descEditor.innerHTML);
         if (!name || !desc) return;
 
         var type = typeSelect.value;
@@ -444,14 +513,17 @@
             return;
           }
         }
-        var research = researchInput ? researchInput.value.trim() : "";
+        var research = researchEditor ? researchEditor.innerText.trim() : "";
+        var researchHtml = researchEditor ? sanitizeHtml(researchEditor.innerHTML) : "";
 
         function finish(photoUrl) {
           sb.from("cases").insert({
             name: name,
             type: type,
             research: research,
+            research_html: researchHtml,
             description: desc,
+            description_html: descHtml,
             photo_url: photoUrl || null
           }).select().single().then(function (res) {
             if (res.error) {
@@ -461,6 +533,8 @@
             if (res.data) addCard(res.data);
             filterAppliers.forEach(function (fn) { fn(); });
             formWrap.reset();
+            if (descEditor) descEditor.innerHTML = "";
+            if (researchEditor) researchEditor.innerHTML = "";
             if (customWrap) customWrap.hidden = true;
             if (hint) hint.hidden = false;
           });

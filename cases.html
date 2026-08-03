@@ -62,11 +62,37 @@
         </div>
         <div class="field field-full">
           <label for="case-research">已有研究（可选）</label>
-          <textarea id="case-research" rows="3" placeholder="该案例已有的相关研究、文献或成果…"></textarea>
+          <div class="rich-toolbar" data-rich-toolbar="case-research">
+            <button type="button" data-cmd="bold" title="加粗">B</button>
+            <button type="button" data-cmd="italic" title="斜体">I</button>
+            <button type="button" data-cmd="underline" title="下划线">U</button>
+            <select data-cmd="fontSize" title="字号">
+              <option value="3">正文</option>
+              <option value="4">大</option>
+              <option value="5">特大</option>
+            </select>
+            <input type="color" data-cmd="foreColor" value="#35603f" title="文字颜色">
+            <input type="color" data-cmd="hiliteColor" value="#ffff99" title="高亮颜色">
+            <button type="button" data-cmd="removeFormat" title="清除格式">清除格式</button>
+          </div>
+          <div class="rich-editor" contenteditable="true" data-rich="case-research" data-placeholder="该案例已有的相关研究、文献或成果…"></div>
         </div>
         <div class="field field-full">
           <label for="case-desc">案例介绍</label>
-          <textarea id="case-desc" rows="5" required placeholder="案例基本情况、发展做法、成效与可借鉴之处…"></textarea>
+          <div class="rich-toolbar" data-rich-toolbar="case-desc">
+            <button type="button" data-cmd="bold" title="加粗">B</button>
+            <button type="button" data-cmd="italic" title="斜体">I</button>
+            <button type="button" data-cmd="underline" title="下划线">U</button>
+            <select data-cmd="fontSize" title="字号">
+              <option value="3">正文</option>
+              <option value="4">大</option>
+              <option value="5">特大</option>
+            </select>
+            <input type="color" data-cmd="foreColor" value="#35603f" title="文字颜色">
+            <input type="color" data-cmd="hiliteColor" value="#ffff99" title="高亮颜色">
+            <button type="button" data-cmd="removeFormat" title="清除格式">清除格式</button>
+          </div>
+          <div class="rich-editor" contenteditable="true" data-rich="case-desc" data-placeholder="案例基本情况、发展做法、成效与可借鉴之处…"></div>
         </div>
         <div class="field field-full">
           <label for="case-photo">照片（可选，建议 2MB 以内）</label>
