@@ -449,6 +449,17 @@ body.modal-open { overflow: hidden; }
 
 .remove-btn:hover { text-decoration: underline; }
 
+.edit-btn {
+  background: none;
+  border: none;
+  color: var(--green-deep);
+  font-size: 13px;
+  cursor: pointer;
+  margin-right: 12px;
+}
+
+.edit-btn:hover { text-decoration: underline; }
+
 .add-note-wrap { display: none; margin-bottom: 26px; }
 body.is-admin .add-note-wrap { display: block; }
 

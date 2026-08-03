@@ -281,12 +281,24 @@
     var hint = document.getElementById("add-case-hint");
     var customWrap = document.getElementById("case-type-custom-wrap");
     var customInput = document.getElementById("case-type-custom");
+    var nameInput = document.getElementById("case-name");
+    var typeSelect = document.getElementById("case-type");
+    var descEditor = document.querySelector('[data-rich="case-desc"]');
+    var researchEditor = document.querySelector('[data-rich="case-research"]');
+    var photoInput = document.getElementById("case-photo");
+    var photoNote = document.getElementById("case-photo-note");
+    var editingId = null;
+    var editingPhoto = "";
     function addCard(item) {
       var article = document.createElement("article");
       article.className = "card entry";
       article.setAttribute("data-tags", item.type || item.direction || "综合");
       article.setAttribute("data-id", item.id || "");
       article.setAttribute("data-custom", "1");
+      article.setAttribute("data-type", item.type || item.direction || "综合");
+      article.setAttribute("data-research", item.research || "");
+      article.setAttribute("data-research-html", item.research_html || "");
+      article.setAttribute("data-photo", item.photo_url || "");
 
       var head = document.createElement("div");
       head.className = "entry-head";
@@ -340,6 +352,13 @@
       var links = document.createElement("p");
       links.className = "entry-links";
       if (document.body.classList.contains("is-admin")) {
+        var editBtn = document.createElement("button");
+        editBtn.className = "edit-btn";
+        editBtn.setAttribute("data-edit", "1");
+        editBtn.type = "button";
+        editBtn.textContent = "编辑";
+        links.appendChild(editBtn);
+
         var removeBtn = document.createElement("button");
         removeBtn.className = "remove-btn";
         removeBtn.setAttribute("data-remove", "1");
@@ -425,9 +444,61 @@
       document.body.classList.add("modal-open");
     }
 
+    function resetCaseForm() {
+      editingId = null;
+      editingPhoto = "";
+      formWrap.reset();
+      if (descEditor) descEditor.innerHTML = "";
+      if (researchEditor) researchEditor.innerHTML = "";
+      if (customWrap) customWrap.hidden = true;
+      var sbBtn = formWrap.querySelector('button[type="submit"]');
+      if (sbBtn) sbBtn.textContent = "保存案例";
+      toggleFormBtn.textContent = "＋ 添加案例";
+      formWrap.hidden = true;
+      if (photoNote) photoNote.hidden = true;
+    }
+
+    function startEdit(card) {
+      var id = card.getAttribute("data-id");
+      if (!id) return;
+      editingId = id;
+      editingPhoto = card.getAttribute("data-photo") || "";
+      var titleEl = card.querySelector(".entry-title");
+      if (nameInput) nameInput.value = titleEl ? titleEl.textContent : "";
+      var type = card.getAttribute("data-type") || "综合";
+      var presets = ["乡村旅游", "乡村发展", "产业发展", "综合"];
+      if (presets.indexOf(type) !== -1) {
+        typeSelect.value = type;
+        if (customWrap) customWrap.hidden = true;
+      } else {
+        typeSelect.value = "__custom";
+        if (customWrap) customWrap.hidden = false;
+        if (customInput) customInput.value = type;
+      }
+      if (researchEditor) {
+        researchEditor.innerHTML = sanitizeHtml(
+          card.getAttribute("data-research-html") || escapeHtml(card.getAttribute("data-research") || "")
+        );
+      }
+      if (descEditor) {
+        descEditor.innerHTML = sanitizeHtml(card.getAttribute("data-full-html") || "");
+      }
+      if (photoInput) photoInput.value = "";
+      if (photoNote) photoNote.hidden = false;
+      var sbBtn = formWrap.querySelector('button[type="submit"]');
+      if (sbBtn) sbBtn.textContent = "保存修改";
+      toggleFormBtn.textContent = "取消编辑";
+      formWrap.hidden = false;
+      formWrap.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
     caseList.addEventListener("click", function (e) {
       var card = e.target.closest(".entry");
       if (!card) return;
+      if (e.target.closest("[data-edit]")) {
+        startEdit(card);
+        return;
+      }
       if (e.target.closest("[data-expand]")) {
         var titleEl = card.querySelector(".entry-title");
         openCaseModal(titleEl ? titleEl.textContent : "案例介绍", card.getAttribute("data-full-html") || "");
@@ -452,13 +523,16 @@
 
     if (toggleFormBtn && formWrap) {
       toggleFormBtn.addEventListener("click", function () {
+        if (editingId) {
+          resetCaseForm();
+          return;
+        }
         var show = formWrap.hidden;
         formWrap.hidden = !show;
         toggleFormBtn.textContent = show ? "收起表单" : "＋ 添加案例";
       });
     }
 
-    var typeSelect = document.getElementById("case-type");
     if (typeSelect) {
       typeSelect.addEventListener("change", function () {
         var isCustom = typeSelect.value === "__custom";
@@ -495,10 +569,6 @@
     if (formWrap) {
       formWrap.addEventListener("submit", function (e) {
         e.preventDefault();
-        var nameInput = document.getElementById("case-name");
-        var descEditor = document.querySelector('[data-rich="case-desc"]');
-        var researchEditor = document.querySelector('[data-rich="case-research"]');
-        var photoInput = document.getElementById("case-photo");
         if (!nameInput || !descEditor) return;
         var name = nameInput.value.trim();
         var desc = descEditor.innerText.trim();
@@ -516,28 +586,36 @@
         var research = researchEditor ? researchEditor.innerText.trim() : "";
         var researchHtml = researchEditor ? sanitizeHtml(researchEditor.innerHTML) : "";
 
+        function afterSave(res) {
+          if (res.error) {
+            window.alert("保存失败：" + res.error.message);
+            return;
+          }
+          if (editingId) {
+            var old = caseList.querySelector('[data-id="' + editingId + '"]');
+            if (old) old.remove();
+          }
+          if (res.data) addCard(res.data);
+          filterAppliers.forEach(function (fn) { fn(); });
+          resetCaseForm();
+          if (hint) hint.hidden = false;
+        }
+
         function finish(photoUrl) {
-          sb.from("cases").insert({
+          var payload = {
             name: name,
             type: type,
             research: research,
             research_html: researchHtml,
             description: desc,
             description_html: descHtml,
-            photo_url: photoUrl || null
-          }).select().single().then(function (res) {
-            if (res.error) {
-              window.alert("保存失败：" + res.error.message);
-              return;
-            }
-            if (res.data) addCard(res.data);
-            filterAppliers.forEach(function (fn) { fn(); });
-            formWrap.reset();
-            if (descEditor) descEditor.innerHTML = "";
-            if (researchEditor) researchEditor.innerHTML = "";
-            if (customWrap) customWrap.hidden = true;
-            if (hint) hint.hidden = false;
-          });
+            photo_url: photoUrl || editingPhoto || null
+          };
+          if (editingId) {
+            sb.from("cases").update(payload).eq("id", editingId).select().single().then(afterSave);
+          } else {
+            sb.from("cases").insert(payload).select().single().then(afterSave);
+          }
         }
 
         var file = photoInput && photoInput.files && photoInput.files[0];
