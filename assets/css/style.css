@@ -417,6 +417,13 @@ body.modal-open { overflow: hidden; }
 
 .rich-toolbar button:hover { border-color: var(--green); color: var(--green-deep); }
 
+.rich-sep {
+  width: 1px;
+  height: 18px;
+  background: var(--line);
+  margin: 0 2px;
+}
+
 .rich-toolbar select,
 .rich-toolbar input[type="color"] {
   height: 26px;

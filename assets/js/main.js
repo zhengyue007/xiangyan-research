@@ -587,7 +587,25 @@
         }
         ctl.addEventListener("click", function () {
           editor.focus();
-          document.execCommand(ctl.getAttribute("data-cmd"), false, null);
+          var cmd = ctl.getAttribute("data-cmd");
+          if (cmd === "firstLine") {
+            document.execCommand("styleWithCSS", false, true);
+            var sel = window.getSelection();
+            if (sel && sel.rangeCount) {
+              var node = sel.getRangeAt(0).startContainer;
+              var block = node.nodeType === 1 ? node : node.parentNode;
+              while (block && block !== editor && block !== document.body) {
+                var tag = block.tagName ? block.tagName.toUpperCase() : "";
+                if (tag === "P" || tag === "DIV" || tag === "LI" || tag.indexOf("H") === 0) break;
+                block = block.parentNode;
+              }
+              if (block && block !== editor) {
+                block.style.textIndent = block.style.textIndent === "2em" ? "" : "2em";
+              }
+            }
+            return;
+          }
+          document.execCommand(cmd, false, null);
         });
       });
     });
