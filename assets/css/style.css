@@ -284,9 +284,21 @@ section { margin-bottom: 48px; }
 }
 
 .case-research {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  background: var(--green-soft);
+  border-left: 3px solid var(--green);
   font-size: 14px;
   color: var(--ink-soft);
-  margin: 12px 0 0;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--green-deep);
 }
 
 .note-toggle {

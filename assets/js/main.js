@@ -277,12 +277,20 @@
       if (item.research) {
         researchEl = document.createElement("p");
         researchEl.className = "case-research";
-        researchEl.textContent = "已有研究：" + item.research;
+        var rLabel = document.createElement("span");
+        rLabel.className = "field-label";
+        rLabel.textContent = "已有研究";
+        researchEl.appendChild(rLabel);
+        researchEl.appendChild(document.createTextNode(item.research));
       }
 
       var summary = document.createElement("p");
       summary.className = "entry-summary";
-      summary.textContent = item.description || item.desc || "";
+      var sLabel = document.createElement("span");
+      sLabel.className = "field-label";
+      sLabel.textContent = "案例介绍";
+      summary.appendChild(sLabel);
+      summary.appendChild(document.createTextNode(item.description || item.desc || ""));
 
       var links = document.createElement("p");
       links.className = "entry-links";
