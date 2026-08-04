@@ -392,12 +392,13 @@
 
     function loadCases() {
       if (!sb) return;
-      sb.from("cases").select("*").order("created_at", { ascending: true })
+      sb.from("cases").select("*").order("created_at", { ascending: false })
         .then(function (res) {
           if (res.error) {
             window.alert("案例加载失败：" + res.error.message);
             return;
           }
+          caseList.innerHTML = "";
           (res.data || []).forEach(addCard);
           filterAppliers.forEach(function (fn) { fn(); });
         });
@@ -712,12 +713,7 @@
             window.alert("保存失败：" + res.error.message);
             return;
           }
-          if (editingId) {
-            var old = caseList.querySelector('[data-id="' + editingId + '"]');
-            if (old) old.remove();
-          }
-          if (res.data) addCard(res.data);
-          filterAppliers.forEach(function (fn) { fn(); });
+          loadCases();
           resetCaseForm();
           if (hint) hint.hidden = false;
         }
